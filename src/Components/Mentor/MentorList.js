@@ -7,10 +7,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Container } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import {Link} from "react-router-dom"
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 export default function MentorList(){
     const [mentorsList,setMentorsList]=useState([]);
+    const [loading,setLoading]=useState(true)
 
     useEffect(()=>{
         getMentors()
@@ -20,6 +22,7 @@ export default function MentorList(){
         let rawData=await fetch("https://assign-mentor-server.herokuapp.com/allMentors",{method:"GET"})
         let jsonData=await rawData.json();
         setMentorsList(jsonData)
+        setLoading(false)
     }
 
     const useStyles = makeStyles((theme) => ({
@@ -32,8 +35,21 @@ export default function MentorList(){
           height: theme.spacing(8),
           
         },
+        loading: {
+            display: 'flex',
+            '& > * + *': {
+              marginLeft: theme.spacing(2),
+            },
+          },
       }));
       const classes = useStyles();
+      if(loading){
+        return (
+            <div className={classes.loading} style={{display:'flex', justifyContent:'center'}}>
+              <CircularProgress />
+            </div>
+          );
+      }
     return(
         <>
         {mentorsList.map((mentor)=>

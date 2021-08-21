@@ -7,11 +7,25 @@ import { useHistory } from "react-router-dom";
 import { Container } from "@material-ui/core";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    '& > * + *': {
+      marginLeft: theme.spacing(2),
+    },
+  },
+}));
 
 
 export default function StudentsHandledByMentor({useParams,currentMentor}){
     const {id,name}=useParams()
     const history=useHistory()
+    const [loading,setLoading]=useState(true)
+
+    const classes = useStyles();
     
     const [studentsHandledByMentor,setStudentsHandledByMentor]=useState([])
     useEffect(() => {
@@ -22,9 +36,17 @@ export default function StudentsHandledByMentor({useParams,currentMentor}){
           const result = await data;
           const res = await result.json();
           setStudentsHandledByMentor(res);
+          setLoading(false)
         };
         dataFun();
       }, []);
+      if(loading){
+        return (
+          <div className={classes.root} style={{display:'flex', justifyContent:'center'}}>
+            <CircularProgress />
+          </div>
+        );
+      }
     return(
         <Container>
           <Button
